@@ -27,21 +27,37 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 // https://github.com/geowarin/friendly-errors-webpack-plugin
 const FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin')
 
-// TODO 不知道什么用途
+/*
+* https://github.com/indexzero/node-portfinder
+* 查看当前端口是否可以用，如果不可以，就换一个端口：
+* 设置 portfinder.basePort确定端口起始端口值
+* 例子：设置 portfinder.basePort = 3000，如果3000端口不可以用，那么就会使用 3001
+* */
 const portfinder = require('portfinder')
 
+/*
+* 获取node HOST 和 PORT
+* 在设置 devServer的时候判断，如果值为undefined就使用配置文件的host和PORT
+* */
 const HOST = process.env.HOST
 const PORT = process.env.PORT && Number(process.env.PORT)
+
+
 
 /* 合并webapck 基础配置*/
 const devWebpackConfig = merge(baseWebpackConfig, {
   module: {
+    // 设置loader 配置
     rules: utils.styleLoaders({ sourceMap: config.dev.cssSourceMap, usePostCSS: true })
   },
-  // cheap-module-eval-source-map is faster for development
+  // https://doc.webpack-china.org/configuration/devtool/#src/components/Sidebar/Sidebar.jsx
+  // 是否生成Source Map
   devtool: config.dev.devtool,
 
-  // these devServer options should be customized in /config/index.js
+  /*
+  * devServer选项 可以在 /config/index.js 定制
+  * http://www.css88.com/doc/webpack2/configuration/dev-server/
+  * */
   devServer: {
     clientLogLevel: 'warning',
     historyApiFallback: {
@@ -66,8 +82,7 @@ const devWebpackConfig = merge(baseWebpackConfig, {
     }
   },
   plugins: [
-    // definePlugin 接收字符串插入到代码当中, 所以你需要的话可以写上 JS 的字符串
-    // 此处，插入适当的环境
+    // definePlugin 定义环境变量
     // https://webpack.js.org/plugins/define-plugin/
     new webpack.DefinePlugin({
       'process.env': require('../config/dev.env')
@@ -97,9 +112,13 @@ const devWebpackConfig = merge(baseWebpackConfig, {
   ]
 })
 
-
+/*
+*  返回一个Promise对象
+*  因为需要使用 portfinder 检查端口是否可以使用，然后在执行webpack Server
+* */
 module.exports = new Promise((resolve, reject) => {
   portfinder.basePort = process.env.PORT || config.dev.port
+  // 检查端口是否可用
   portfinder.getPort((err, port) => {
     if (err) {
       reject(err)
@@ -109,7 +128,7 @@ module.exports = new Promise((resolve, reject) => {
       // add port to devServer config
       devWebpackConfig.devServer.port = port
 
-      // Add FriendlyErrorsPlugin
+      // webpack 错误信息提示插件
       devWebpackConfig.plugins.push(new FriendlyErrorsPlugin({
         compilationSuccessInfo: {
           messages: [`Your application is running here: http://${devWebpackConfig.devServer.host}:${port}`],
@@ -118,7 +137,7 @@ module.exports = new Promise((resolve, reject) => {
           ? utils.createNotifierCallback()
           : undefined
       }))
-
+      // 启动webpack Server
       resolve(devWebpackConfig)
     }
   })

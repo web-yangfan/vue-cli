@@ -1,7 +1,7 @@
 "use strict";
 const path = require('path')
 const config = require('../config')
-
+const packageConfig = require('../package.json')
 // 提取 css 的插件
 // https://github.com/webpack-contrib/extract-text-webpack-plugin
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
@@ -20,21 +20,12 @@ exports.assetsPath = function (_path) {
   return path.posix.join(assetsSubDirectory, _path)
 }
 
-/**
- * 生成处理css的loaders配置
- * @method cssLoaders
- * @param  {Object}   options 生成配置
- *                            option = {
- *                              // 是否开启 sourceMap
- *                              sourceMap: true,
- *                              // 是否提取css
- *                              extract: true
- *                            }
- * @return {Object}           处理css的loaders配置对象
- */
+/*
+* 生成webpack的loader格式的json, css,less,sass,scss,stylus,styl
+* https://vue-loader.vuejs.org/zh-cn/options.html#extractcss
+* */
 exports.cssLoaders = function (options) {
   options = options || {}
-
   const cssLoader = {
     loader: 'css-loader',
     options: {
@@ -49,13 +40,6 @@ exports.cssLoaders = function (options) {
     }
   }
 
-  // generate loader string to be used with extract text plugin
-  /**
-   * 生成 ExtractTextPlugin对象或loader字符串
-   * @method generateLoaders
-   * @param  {Array}        loaders loader名称数组
-   * @return {String|Object}        ExtractTextPlugin对象或loader字符串
-   */
   function generateLoaders (loader, loaderOptions) {
     const loaders = options.usePostCSS ? [cssLoader, postcssLoader] : [cssLoader]
 
@@ -68,10 +52,6 @@ exports.cssLoaders = function (options) {
       })
     }
 
-    // extract为true时，提取css
-    // 生产环境中，默认为true
-    // Extract CSS when that option is specified
-    // (which is the case during production build)
     if (options.extract) {
       return ExtractTextPlugin.extract({
         use: loaders,
@@ -81,8 +61,6 @@ exports.cssLoaders = function (options) {
       return ['vue-style-loader'].concat(loaders)
     }
   }
-
-  // https://vue-loader.vuejs.org/en/configurations/extract-css.html
   return {
     css: generateLoaders(),
     postcss: generateLoaders(),
@@ -94,24 +72,12 @@ exports.cssLoaders = function (options) {
   }
 }
 
-
-/**
- * 生成 style-loader的配置
- * style-loader文档：https://github.com/webpack/style-loader
- * @method styleLoaders
- * @param  {Object}     options 生成配置
- *                              option = {
- *                                // 是否开启 sourceMap
- *                                sourceMap: true,
- *                                // 是否提取css
- *                                extract: true
- *                              }
- * @return {Array}              style-loader的配置
- */
+/*
+* 获取webpack配置样式的json, 把json转换成webpack配置loader格式
+* */
 exports.styleLoaders = function (options) {
   const output = []
   const loaders = exports.cssLoaders(options)
-
   for (const extension in loaders) {
     const loader = loaders[extension]
     output.push({
@@ -119,7 +85,6 @@ exports.styleLoaders = function (options) {
       use: loader
     })
   }
-
   return output
 }
 
@@ -137,7 +102,7 @@ exports.createNotifierCallback = () => {
     const filename = error.file && error.file.split('!').pop()
 
     notifier.notify({
-      title: '测试',
+      title: packageConfig.name,
       message: severity + ': ' + error.name,
       subtitle: filename || '',
       icon: path.join(__dirname, 'logo.png')

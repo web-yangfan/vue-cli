@@ -13,7 +13,6 @@ module.exports = {
     port: 3000, // 端口号
     autoOpenBrowser: false, // 是否自动打开浏览器
     // https://webpack.js.org/configuration/devtool/#development
-    devtool: 'cheap-module-eval-source-map',
     errorOverlay: true,
     notifyOnErrors: true,
     // https://webpack.js.org/configuration/dev-server/#devserver-watchoptions-

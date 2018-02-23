@@ -11,7 +11,7 @@ const sourceMapEnabled = isProduction
 
 // vue-loader的配置
 // https://github.com/vuejs/vue-loader
-// TODO 分享这个模块
+// TODO 分析这个模块
 module.exports = {
   loaders: utils.cssLoaders({
     sourceMap: sourceMapEnabled,
