@@ -110,4 +110,7 @@ li {
 a {
   color: #42b983;
 }
+.hello {
+  background: url('../assets/1.jpg');
+}
 </style>
