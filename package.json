@@ -4,6 +4,7 @@
   "description": "分析vue-cli",
   "main": "index.js",
   "scripts": {
+    "init": "npm install --registry=http://registry.npm.taobao.org",
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
     "start": "npm run dev",
     "build": "node build/build.js"
