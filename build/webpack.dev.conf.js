@@ -55,8 +55,8 @@ const devWebpackConfig = merge(baseWebpackConfig, {
   devtool: config.dev.devtool,
 
   /*
-  * devServer选项 可以在 /config/index.js 定制
-  * http://www.css88.com/doc/webpack2/configuration/dev-server/
+  * devServer选项：是否生成，以及如何生成 Source Map。 可以在 /config/index.js 定制
+  * http://www.css88.com/doc/webpack2/configuration/devtool/
   * */
   devServer: {
     clientLogLevel: 'warning',
